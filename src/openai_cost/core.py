@@ -33,7 +33,7 @@ class Pricing:
     prompt_per_m: float
     completion_per_m: float
     cached_prompt_per_m: float | None = None
-    batch_discount: float | None = None   # e.g. 0.5 for 50 % off
+    batch_discount: float | None = None  # e.g. 0.5 for 50 % off
 
 
 class Usage(NamedTuple):

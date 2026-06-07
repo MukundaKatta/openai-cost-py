@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import pytest
 
+import openai_cost
 from openai_cost import (
     DEFAULT_PRICING_TABLE,
     Pricing,
@@ -12,8 +13,8 @@ from openai_cost import (
     default_pricing,
     known_models,
     normalize_model_id,
+    usage,
 )
-from openai_cost.core import usage
 
 # ---------------------------------------------------------------------------
 # normalize_model_id
@@ -368,3 +369,41 @@ def test_gpt4o_has_cache_pricing():
 def test_gpt4o_has_batch_pricing():
     p = DEFAULT_PRICING_TABLE["gpt-4o"]
     assert p.batch_discount == pytest.approx(0.5)
+
+
+# ---------------------------------------------------------------------------
+# Public API surface
+# ---------------------------------------------------------------------------
+
+
+def test_usage_is_public_export():
+    # usage() is documented as a top-level API function and must be exported.
+    assert "usage" in openai_cost.__all__
+    assert openai_cost.usage is usage
+
+
+def test_public_all_is_importable():
+    # Everything listed in __all__ must be a real attribute of the package.
+    for name in openai_cost.__all__:
+        assert hasattr(openai_cost, name), f"{name} listed in __all__ but missing"
+
+
+# ---------------------------------------------------------------------------
+# cost — batch + cache interaction
+# ---------------------------------------------------------------------------
+
+
+def test_cost_batch_and_cache_combined():
+    # gpt-4o: 800 cached + 200 uncached prompt, 500 completion, then 50% batch off.
+    # uncached = 200 * 2.50/1e6 = 0.0005
+    # cached   = 800 * 1.25/1e6 = 0.001
+    # output   = 500 * 10.00/1e6 = 0.005
+    # subtotal = 0.0065 → batch *0.5 → 0.00325
+    usd = cost(
+        model="gpt-4o",
+        prompt_tokens=1000,
+        completion_tokens=500,
+        cached_tokens=800,
+        batch=True,
+    )
+    assert usd == pytest.approx(0.00325)

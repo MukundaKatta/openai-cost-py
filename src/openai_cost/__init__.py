@@ -46,6 +46,7 @@ from .core import (
     default_pricing,
     known_models,
     normalize_model_id,
+    usage,
 )
 
 __all__ = [
@@ -56,6 +57,7 @@ __all__ = [
     "default_pricing",
     "known_models",
     "normalize_model_id",
+    "usage",
 ]
 
 __version__ = "0.1.0"

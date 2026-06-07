@@ -107,7 +107,7 @@ pip install -e ".[dev]"
 pytest tests/ -v
 ```
 
-32 tests. Covers all pricing variants (cache, batch, no-cache fallback), alias resolution, custom tables, `Usage` NamedTuple, and `Pricing` immutability.
+45 tests. Covers all pricing variants (cache, batch, combined batch+cache, no-cache fallback), alias resolution, custom tables, `Usage` NamedTuple, `Pricing` immutability, and the public API surface.
 
 ## License
 
